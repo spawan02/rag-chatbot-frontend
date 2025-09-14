@@ -152,11 +152,7 @@ function App() {
       setIsLoading(false);
     }
   };
-  const handlePromptClick = (prompt: string) => {
-    setInputValue(prompt);
-  };
-
-
+  
   return (
     <div className="chat-app">
       <ChatHeader onReset={handleResetSession} />
