@@ -28,8 +28,8 @@ It includes session handling, streaming responses, and predefined prompts for qu
 
 ### Clone the repo
 ```bash
-git clone https://github.com/your-username/ai-chat-frontend.git
-cd ai-chat-frontend
+git clone https://github.com/spawan02/rag-chatbot-frontend.git
+cd rag-chatbot-frontend
 ```
 ### Install dependencies
 ```bash
