@@ -5,6 +5,6 @@ export default defineConfig({
   plugins: [react()],
   preview: {
     host: '0.0.0.0',
-    port: 5173,
+    allowedHosts: ['rag-chatbot-frontend-eb9e.onrender.com']
   }
 });
