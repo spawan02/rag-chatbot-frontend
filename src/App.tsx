@@ -38,10 +38,10 @@ function App() {
     try {
       setIsLoading(true);
 
-      let storedSessionId = localStorage.getItem("sessionId");
+      let storedSessionId = sessionStorage.getItem("sessionId");
       if (!storedSessionId) {
-        storedSessionId = await chatAPI.startSession();
-        localStorage.setItem("sessionId", storedSessionId);
+          storedSessionId = await chatAPI.startSession();
+          sessionStorage.setItem("sessionId", storedSessionId);
       }
 
       setSessionId(storedSessionId);
@@ -115,12 +115,32 @@ function App() {
 
       const response = await chatAPI.sendMessage(sessionId, messageText);
       simulateTyping(response, botMessageId);
-    } catch (error) {
-      console.error("Failed to send message:", error);
-    } finally {
-      setIsTyping(false);
-    }
-  };
+    } catch (error: any) {
+      let errorMessage: string;
+
+      if (error?.response?.data?.error === "Invalid session ID") {
+        errorMessage = "Your session expired. Please reset and try again.";
+      } else if (error?.status === 503) {
+        errorMessage = "The AI model is overloaded. Please try again.";
+      } else {
+        errorMessage = "Something went wrong. Please try again.";
+      }
+
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.isStreaming
+            ? {
+                ...msg,
+                text: errorMessage,
+                isStreaming: false,
+              }
+            : msg
+        )
+      );
+      } finally {
+          setIsTyping(false);
+      }
+    };
 
   const handleResetSession = async () => {
     if (!sessionId) return;
@@ -130,10 +150,10 @@ function App() {
       setIsLoading(true);
       await chatAPI.resetSession(sessionId);
 
-      localStorage.removeItem("sessionId");
+      sessionStorage.removeItem("sessionId");
 
       const newSessionId = await chatAPI.startSession();
-      localStorage.setItem("sessionId", newSessionId);
+      sessionStorage.setItem("sessionId", newSessionId);
       setSessionId(newSessionId);
 
       setMessages([
